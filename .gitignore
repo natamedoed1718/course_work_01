@@ -206,6 +206,17 @@ __marimo__/
 # Папка настроек PyCharm
 .idea/
 
-
-
-
+# Unit test / coverage reports
+#htmlcov/
+#.tox/
+#.nox/
+#.coverage
+#.coverage.*
+#.cache
+#nosetests.xml
+#coverage.xml
+#*.cover
+#*.py.cover
+#.hypothesis/
+#.pytest_cache/
+#cover/
