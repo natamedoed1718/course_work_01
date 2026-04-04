@@ -69,7 +69,7 @@ pip install -r requirements.txt
 ````
 3. Запустите тесты:
 ````
-pytest --cov
+pytest --cov tests
 ````
 4. Для проверки работы функций используйте main.py:
 
