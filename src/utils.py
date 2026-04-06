@@ -6,7 +6,7 @@ from typing import Dict, List
 
 import pandas as pd
 import requests
-from black import Any
+from typing import Any
 from pandas import DataFrame
 
 from src.config import API_KEY, URL_CURRENCY, URL_STOCK
@@ -108,23 +108,19 @@ def get_card_with_spend(sorted_df: pd.DataFrame) -> list[dict]:
 
 
 def get_top_transactions(sorted_df: pd.DataFrame, get_top: int) -> list[dict]:
-    logger.info("Начало вычисления топ-%d транзакций", get_top)
-
     sorted_pay_df = sorted_df.sort_values(by="Сумма операции", ascending=False)
     top_transactions = sorted_pay_df.head(get_top)
 
     result = []
     for _, row in top_transactions.iterrows():
-        transaction = {
-            "date": pd.to_datetime(row["Дата платежа"], dayfirst=True).strftime("%d.%m.%Y"),
-            "amount": round(row["Сумма операции"], 2),
-            "category": row["Категория"],
-            "description": row["Описание"],
-        }
-        logger.debug("Топ транзакция: %s", transaction)
-        result.append(transaction)
-
-    logger.info("Вычисление топ-транзакций завершено")
+        result.append(
+            {
+                "date": pd.to_datetime(row["Дата операции"], dayfirst=True).strftime("%d.%m.%Y"),
+                "amount": round(row["Сумма операции"], 2),
+                "category": row["Категория"],
+                "description": row["Описание"],
+            }
+        )
     return result
 
 

@@ -1,7 +1,17 @@
 import json
 
-from src.utils import (get_card_with_spend, get_currency, get_data_time, get_path_and_period, get_period_range,
-                       get_stock, get_time_for_greeting, get_top_transactions, top_categories, transfers_and_cash)
+from src.utils import (
+    get_card_with_spend,
+    get_currency,
+    get_data_time,
+    get_path_and_period,
+    get_period_range,
+    get_stock,
+    get_time_for_greeting,
+    get_top_transactions,
+    top_categories,
+    transfers_and_cash,
+)
 
 
 # Страница "Главная"
@@ -55,12 +65,12 @@ def get_events(date_time: str, period: str = "M") -> dict:
     df = get_path_and_period("../data/operations.xlsx", period_date)
 
     # 3. Фильтруем данные по выбранному диапазону
-    df_filtered = df[(df["Дата операции"] >= start) & (df["Дата операции"] <= end)]
+    filtered_df = df[(df["Дата операции"] >= start) & (df["Дата операции"] <= end)]
 
     # 4. Разделяем расходы и поступления
     # Расходы — сумма операций < 0, доходы — сумма операций > 0
-    expenses_df = df_filtered[df["Сумма операции"] < 0]
-    income_df = df_filtered[df["Сумма операции"] > 0]
+    expenses_df = filtered_df[filtered_df["Сумма операции"] < 0]
+    income_df = filtered_df[filtered_df["Сумма операции"] > 0]
 
     # 5. Считаем общие суммы и топ-7 категорий расходов
     expenses_main = top_categories(expenses_df)  # топ-7 категорий + Остальное

@@ -19,3 +19,6 @@ if __name__ == "__main__":
     # Инвестиции(копилка)
     result = investment_bank("2021-04", transactions, 50)
     print(result)
+
+
+

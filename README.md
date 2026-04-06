@@ -28,57 +28,6 @@
 
 ## Структура проекта
 
-.
-├── src
-│ ├── __init__.py
-│ ├── utils.py
-│ ├── main.py
-│ ├── views.py
-│ ├── reports.py
-│ └── services.py
-├── data
-│ ├── operations.xlsx
-├── tests
-│ ├── __init__.py
-│ ├── test_utils.py
-│ ├── test_views.py
-│ ├── test_reports.py
-│ └── test_services.py
-├── user_settings.json
-├── .venv/
-├── .env
-├── .env_template
-├── .git/
-├── .idea/
-├── .flake8
-├── .gitignore
-├── pyproject.toml
-├── poetry.lock
-└── README.md
-
-
-## Запуск проекта
-1. Клонируйте репозиторий:
-```bash
-git clone <URL_репозитория>
-cd coursework_1
-```
-2. Установите зависимости:
-````
-pip install -r requirements.txt
-````
-3. Запустите тесты:
-````
-pytest --cov tests
-````
-4. Для проверки работы функций используйте main.py:
-
-````
-python src/main.py
-````
-
-## Структура проекта
-
 
 * ├── src
 * │ ├── __init__.py
@@ -273,3 +222,4 @@ investment_bank("2021-04", transactions, 50)
 ```
 
 ## 3. Модуль reports.py
+
