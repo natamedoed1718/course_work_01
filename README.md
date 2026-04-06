@@ -28,33 +28,33 @@
 
 ## Структура проекта
 
-.
-├── src
-│ ├── __init__.py
-│ ├── utils.py
-│ ├── main.py
-│ ├── views.py
-│ ├── reports.py
-│ └── services.py
-├── data
-│ ├── operations.xlsx
-├── tests
-│ ├── __init__.py
-│ ├── test_utils.py
-│ ├── test_views.py
-│ ├── test_reports.py
-│ └── test_services.py
-├── user_settings.json
-├── .venv/
-├── .env
-├── .env_template
-├── .git/
-├── .idea/
-├── .flake8
-├── .gitignore
-├── pyproject.toml
-├── poetry.lock
-└── README.md
+
+* ├── src
+* │ ├── __init__.py
+* │ ├── utils.py
+* │ ├── main.py
+* │ ├── views.py
+* │ ├── reports.py
+* │ └── services.py
+* ├── data
+* │ ├── operations.xlsx
+* ├── tests
+* │ ├── __init__.py
+* │ ├── test_utils.py
+* │ ├── test_views.py
+* │ ├── test_reports.py
+* │ └── test_services.py
+* ├── user_settings.json
+* ├── .venv/
+* ├── .env
+* ├── .env_template
+* ├── .git/
+* ├── .idea/
+* ├── .flake8
+* ├── .gitignore
+* ├── pyproject.toml
+* ├── poetry.lock
+* └── README.md
 
 
 ## Запуск проекта
@@ -85,3 +85,141 @@ python src/main.py
 * Расширение отчётов по категориям.
 * Визуализация данных.
 * Поддержка нескольких валют и автоматическое обновление курсов.
+
+## Источник данных
+
+Используются транзакции из Excel-файла:
+
+* Дата операции
+* Сумма операции
+* Категория
+* Описание
+* Номер карты
+* Кэшбэк
+
+***Данные анализируются за период:***
+
+--с начала месяца до указанной даты--
+
+***Пример:***
+
+Дата: 2020-05-20  
+Период: 01.05.2020 — 20.05.2020
+
+***Пользовательские настройки***
+
+Файл user_settings.json:
+```
+{
+  "user_currencies": ["USD", "EUR"],
+  "user_stocks": ["AAPL", "AMZN", "GOOGL", "MSFT", "TSLA"]
+}
+```
+***Используется для:***
+
+* получения курсов валют
+* получения цен акций через API (requests)
+
+## 1. Модуль views.py
+### Страница «Главная»
+***Функция***
+```
+def main(date_time: str) -> str
+```
+**Возвращает JSON:**
+* приветствие
+* расходы по картам
+* кешбэк (1% от расходов)
+* топ-5 транзакций
+* курсы валют
+* цены акций
+
+***Пример ответа***
+```
+{
+  "greeting": "Добрый день",
+  "cards": [
+    {
+      "last_digits": "1234",
+      "total_spent": 1500.0,
+      "cashback": 15.0
+    }
+  ],
+  "top_transactions": [],
+  "currency_rates": [],
+  "stocks_prices": []
+}
+```
+
+### Страница «События»
+***Функция***
+```
+def get_events(date_time: str, period: str = "M") -> dict
+```
+
+**Периоды**
+```
+Значение	Описание
+W	        неделя
+M	        месяц
+Y	        год
+ALL	        всё время
+```
+**Возвращает:**
+
+Расходы:
+* общая сумма
+* топ-7 категорий + "Остальное"
+* переводы и наличные
+
+Доходы:
+* общая сумма
+* категории доходов
+
+Дополнительно:
+* валюты
+* акции
+
+## 2. Модуль services.py
+### Выгодные категории повышенного кешбэка
+
+***Функция***
+```
+def analyze_cashback(data: pd.DataFrame, year: int, month: int) -> str
+```
+
+***Логика:***
+* фильтрация по дате
+* только расходы с кешбэком
+* группировка по категориям
+* расчет: 1 рубль за каждые 100 рублей
+
+***Пример:***
+```
+{
+  "Супермаркеты": 17,
+  "Фастфуд": 25
+}
+```
+
+### Инвесткопилка
+***Функция***
+```
+def investment_bank(month: str, transactions: List[Dict[str, Any]], limit: int) -> float
+```
+
+***Логика:***
+
+* фильтр по месяцу
+* только расходы
+* округление вверх до limit
+* накопление через reduce
+
+***Пример:***
+```
+investment_bank("2021-04", transactions, 50)
+ → 38.0
+```
+
+## 3. Модуль reports.py
+
