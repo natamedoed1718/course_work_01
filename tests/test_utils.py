@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Any
 from unittest.mock import MagicMock, patch
 
 import pandas as pd
@@ -30,16 +30,18 @@ def sample_df() -> DataFrame:
 
 # get_card_with_spend
 def test_get_card_with_spend(sample_df: DataFrame) -> None:
-    result: List[Dict] = get_card_with_spend(sample_df)
+    result: List[Dict[str, Any]] = get_card_with_spend(sample_df)
     assert isinstance(result, list)
     assert all("last_digits" in r and "total_spent" in r and "cashback" in r for r in result)
 
 
+
 # get_top_transactions
 def test_get_top_transactions(sample_df: DataFrame) -> None:
-    top: List[Dict] = get_top_transactions(sample_df, 2)
+    top: List[Dict[str, Any]] = get_top_transactions(sample_df, 2)
     assert len(top) == 2
     assert all("date" in t and "amount" in t and "category" in t for t in top)
+
 
 
 # top_categories
@@ -54,16 +56,15 @@ def test_top_categories(sample_df: DataFrame, top_n: int, expected_len: int) -> 
 
 # transfers_and_cash
 def test_transfers_and_cash(sample_df: DataFrame) -> None:
-    result: List[Dict] = transfers_and_cash(sample_df)
+    result: List[Dict[str, Any]] = transfers_and_cash(sample_df)
     assert isinstance(result, list)
     assert all("category" in r and "amount" in r for r in result)
-    # проверяем, что категории только Наличные или Переводы
     assert all(r["category"] in ["Наличные", "Переводы"] for r in result)
 
 
 # get_currency (mock)
 @patch("src.utils.requests.get")
-def test_get_currency(mock_get, tmp_path: Path) -> None:
+def test_get_currency(mock_get: MagicMock, tmp_path: Path) -> None:
     # создаем временный user_settings.json
     json_file = tmp_path / "user_settings.json"
     json_file.write_text('{"user_currencies": ["USD"], "user_stocks": ["AAPL"]}', encoding="utf-8")
@@ -82,7 +83,7 @@ def test_get_currency(mock_get, tmp_path: Path) -> None:
 
 # get_stock (mock)
 @patch("src.utils.requests.get")
-def test_get_stock(mock_get, tmp_path: Path) -> None:
+def test_get_stock(mock_get: MagicMock, tmp_path: Path) -> None:
     # создаем временный user_settings.json
     json_file = tmp_path / "user_settings.json"
     json_file.write_text('{"user_currencies": ["USD"], "user_stocks": ["AAPL"]}', encoding="utf-8")
@@ -101,7 +102,7 @@ def test_get_stock(mock_get, tmp_path: Path) -> None:
     assert stocks[0]["price"] == 150.12
 
 
-def test_get_time_for_greeting_morning():
+def test_get_time_for_greeting_morning() -> None:
     with patch("src.utils.datetime") as mock_datetime:
         mock_datetime.now.return_value.hour = 8
         mock_datetime.now.return_value = mock_datetime.now.return_value
@@ -109,7 +110,7 @@ def test_get_time_for_greeting_morning():
         assert greeting == "Доброе утро"
 
 
-def test_get_time_for_greeting_evening():
+def test_get_time_for_greeting_evening() -> None:
     with patch("src.utils.datetime") as mock_datetime:
         mock_datetime.now.return_value.hour = 20
         mock_datetime.now.return_value = mock_datetime.now.return_value
@@ -117,14 +118,14 @@ def test_get_time_for_greeting_evening():
         assert greeting == "Добрый вечер"
 
 
-def test_get_data_time():
+def test_get_data_time() -> None:
     date_str = "2024-04-04 15:30:00"
     result = get_data_time(date_str)
     assert result[0].endswith("00:00:00")  # начало месяца
     assert result[1].startswith("04.04.2024")  # сама дата
 
 
-def test_get_path_and_period(tmp_path):
+def test_get_path_and_period(tmp_path: Path) -> None:
     # создаем фиктивный Excel файл
     df = pd.DataFrame(
         {
