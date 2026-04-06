@@ -1,6 +1,6 @@
 import pandas as pd
 
-from src.services import analyze_cashback, investment_bank
+# from src.services import analyze_cashback, investment_bank
 from src.views import get_events, main
 
 
@@ -15,9 +15,9 @@ if __name__ == "__main__":
     # События
     print(get_events("2018-04-17 12:00:00"))
 
-    # Выгодные категории повышенного кешбэка
-    result = analyze_cashback(df, 2018, 4)
-    print(result)
-    # Инвестиции(копилка)
-    result = investment_bank("2021-04", transactions, 50)
-    print(result)
+    # # Выгодные категории повышенного кешбэка
+    # result = analyze_cashback(df, 2018, 4)
+    # print(result)
+    # # Инвестиции(копилка)
+    # result = investment_bank("2021-04", transactions, 50)
+    # print(result)
