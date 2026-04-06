@@ -9,8 +9,9 @@ logger = logging.getLogger(__name__)
 
 #  Анализ выгодных категорий кешбэка
 
+
 def analyze_cashback(data: pd.DataFrame, year: int, month: int) -> str:
-    """ Функция анализирует выгодные категории кешбэка и возвращает JSON """
+    """Функция анализирует выгодные категории кешбэка и возвращает JSON"""
     logger.info("Анализ кешбэка за %d-%02d", year, month)
 
     # Фильтруем по дате
@@ -32,13 +33,18 @@ def analyze_cashback(data: pd.DataFrame, year: int, month: int) -> str:
 
 # Инвесткопилка
 
+
 def investment_bank(month: str, transactions: List[Dict[str, Any]], limit: int) -> float:
-    """ Рассчитывает сумму накоплений в инвесткопилке за месяц """
+    """Рассчитывает сумму накоплений в инвесткопилке за месяц"""
 
     logger.info("Расчет инвесткопилки за %s с шагом %d", month, limit)
 
     # 1. Фильтр по месяцу
-    filtered = list(filter(lambda t: t["Дата операции"].startswith(month), transactions))
+    year, month_num = map(int, month.split("-"))
+
+    filtered = list(
+        filter(lambda t: (t["Дата операции"].year == year and t["Дата операции"].month == month_num), transactions)
+    )
 
     # 2. Только расходы
     expenses = list(filter(lambda t: t["Сумма операции"] < 0, filtered))
@@ -50,10 +56,13 @@ def investment_bank(month: str, transactions: List[Dict[str, Any]], limit: int) 
         return rounded - amount
 
     # 4. Считаем накопления (functional style - это функция, которая сворачивает список в одно значение)
-    total = reduce(lambda acc, t: acc + calc_rounding(t["Сумма операции"]), expenses, 0)
+    total = reduce(
+        lambda acc, t: acc + calc_rounding(t["Сумма операции"]),
+        expenses,
+        0.0  # ← ВАЖНО
+    )
 
     total = round(total, 2)
     logger.info("Итого в инвесткопилке: %s", total)
 
     return total
-
