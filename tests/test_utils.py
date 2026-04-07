@@ -1,20 +1,14 @@
-import pandas as pd
-import pytest
-from unittest.mock import patch, MagicMock
-from pandas import DataFrame
 from pathlib import Path
 from typing import Dict, List
-from src.utils import (
-    get_card_with_spend,
-    get_top_transactions,
-    top_categories,
-    transfers_and_cash,
-    get_currency,
-    get_stock,
-    get_time_for_greeting,
-    get_data_time,
-    get_path_and_period,
-)
+from unittest.mock import MagicMock, patch
+
+import pandas as pd
+import pytest
+from pandas import DataFrame
+
+from src.utils import (get_card_with_spend, get_currency, get_data_time, get_path_and_period, get_stock,
+                       get_time_for_greeting, get_top_transactions, top_categories, transfers_and_cash)
+
 
 @pytest.fixture
 def sample_df() -> DataFrame:

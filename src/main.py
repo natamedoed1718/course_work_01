@@ -1,5 +1,6 @@
 import pandas as pd
 
+from src.reports import spending_by_category, spending_by_weekday
 from src.services import analyze_cashback, investment_bank
 from src.views import get_events, main
 
@@ -20,5 +21,10 @@ if __name__ == "__main__":
     result = investment_bank("2021-04", transactions, 50)
     print(result)
 
+    # Траты по категории
+    report1 = spending_by_category(df, "Супермаркеты", "2021-04-30")
+    print(report1)
 
-
+    # Траты по дням недели
+    report2 = spending_by_weekday(df, "2021-04-30")
+    print(report2)

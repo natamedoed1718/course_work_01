@@ -56,11 +56,7 @@ def investment_bank(month: str, transactions: List[Dict[str, Any]], limit: int) 
         return rounded - amount
 
     # 4. Считаем накопления (functional style - это функция, которая сворачивает список в одно значение)
-    total = reduce(
-        lambda acc, t: acc + calc_rounding(t["Сумма операции"]),
-        expenses,
-        0.0  # ← ВАЖНО
-    )
+    total = reduce(lambda acc, t: acc + calc_rounding(t["Сумма операции"]), expenses, 0.0)  # ← ВАЖНО
 
     total = round(total, 2)
     logger.info("Итого в инвесткопилке: %s", total)

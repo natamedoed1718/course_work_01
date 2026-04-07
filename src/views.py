@@ -1,17 +1,7 @@
 import json
 
-from src.utils import (
-    get_card_with_spend,
-    get_currency,
-    get_data_time,
-    get_path_and_period,
-    get_period_range,
-    get_stock,
-    get_time_for_greeting,
-    get_top_transactions,
-    top_categories,
-    transfers_and_cash,
-)
+from src.utils import (get_card_with_spend, get_currency, get_data_time, get_path_and_period, get_period_range,
+                       get_stock, get_time_for_greeting, get_top_transactions, top_categories, transfers_and_cash)
 
 
 # Страница "Главная"
