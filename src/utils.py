@@ -2,11 +2,10 @@ import json
 import logging
 import os
 from datetime import datetime, timedelta
-from typing import Dict, List
+from typing import Any, Dict, List
 
 import pandas as pd
 import requests
-from typing import Any
 from pandas import DataFrame
 
 from src.config import API_KEY, URL_CURRENCY, URL_STOCK
