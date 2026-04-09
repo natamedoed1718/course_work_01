@@ -84,4 +84,4 @@ def get_events(date_time: str, period: str = "M") -> dict:
         "stock_prices": stock_prices,
     }
 
-    return result
+    return json.dumps(result, ensure_ascii=False, indent=4)

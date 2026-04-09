@@ -46,8 +46,12 @@ def report_to_file(filename: Optional[str] = None) -> Callable:
 
 
 @report_to_file()
-def spending_by_category(transactions: pd.DataFrame, category: str, date: Optional[str] = None) -> pd.DataFrame:
-    """Траты по категории за последние 3 месяца"""
+def spending_by_category(
+    transactions: pd.DataFrame,
+    category: str,
+    date: Optional[str] = None
+) -> str:
+    """ Траты по категории за последние 3 месяца (JSON) """
 
     if date:
         end_date = pd.to_datetime(date)
@@ -67,12 +71,18 @@ def spending_by_category(transactions: pd.DataFrame, category: str, date: Option
     ]
 
     result = filtered[["Дата операции", "Сумма операции"]]
-    return result
 
+
+    result["Дата операции"] = result["Дата операции"].dt.strftime("%Y-%m-%d %H:%M:%S")
+
+    return json.dumps(result.to_dict(orient="records"), ensure_ascii=False, indent=4)
 
 @report_to_file()
-def spending_by_weekday(transactions: pd.DataFrame, date: Optional[str] = None) -> pd.DataFrame:
-    """Средние траты по дням недели за 3 месяца"""
+def spending_by_weekday(
+    transactions: pd.DataFrame,
+    date: Optional[str] = None
+) -> str:
+    """ Средние траты по дням недели (JSON) """
 
     if date:
         end_date = pd.to_datetime(date)
@@ -84,10 +94,21 @@ def spending_by_weekday(transactions: pd.DataFrame, date: Optional[str] = None) 
     df = transactions.copy()
     df["Дата операции"] = pd.to_datetime(df["Дата операции"])
 
-    filtered = df[(df["Дата операции"] >= start_date) & (df["Дата операции"] <= end_date) & (df["Сумма операции"] < 0)]
+    filtered = df[
+        (df["Дата операции"] >= start_date)
+        & (df["Дата операции"] <= end_date)
+        & (df["Сумма операции"] < 0)
+    ]
 
     filtered["weekday"] = filtered["Дата операции"].dt.day_name()
 
-    result = filtered.groupby("weekday")["Сумма операции"].mean().abs().round(2).reset_index()
+    result = (
+        filtered
+        .groupby("weekday")["Сумма операции"]
+        .mean()
+        .abs()
+        .round(2)
+        .reset_index()
+    )
 
-    return result
+    return json.dumps(result.to_dict(orient="records"), ensure_ascii=False, indent=4)

@@ -2,8 +2,9 @@ import json
 import logging
 from functools import reduce
 from typing import Any, Dict, List
-
+from datetime import datetime
 import pandas as pd
+
 
 logger = logging.getLogger(__name__)
 
@@ -14,8 +15,18 @@ def analyze_cashback(data: pd.DataFrame, year: int, month: int) -> str:
     """Функция анализирует выгодные категории кешбэка и возвращает JSON"""
     logger.info("Анализ кешбэка за %d-%02d", year, month)
 
-    # Фильтруем по дате
-    filtered = data[(data["Дата операции"].dt.year == year) & (data["Дата операции"].dt.month == month)]
+    # используем datetime
+    start_date = datetime(year, month, 1)
+
+    if month == 12:
+        end_date = datetime(year + 1, 1, 1)
+    else:
+        end_date = datetime(year, month + 1, 1)
+
+    filtered = data[
+        (data["Дата операции"] >= start_date) &
+        (data["Дата операции"] < end_date)
+        ]
 
     # Оставляем только операции с кешбэком и расходами
     filtered = filtered[(filtered["Кэшбэк"] > 0) & (filtered["Сумма операции"] < 0)]
@@ -40,11 +51,16 @@ def investment_bank(month: str, transactions: List[Dict[str, Any]], limit: int) 
     logger.info("Расчет инвесткопилки за %s с шагом %d", month, limit)
 
     # 1. Фильтр по месяцу
-    year, month_num = map(int, month.split("-"))
+    target_date = datetime.strptime(month, "%Y-%m")
 
-    filtered = list(
-        filter(lambda t: (t["Дата операции"].year == year and t["Дата операции"].month == month_num), transactions)
-    )
+    # фильтр через datetime
+    filtered = list(filter(
+        lambda t: (
+                datetime.strptime(str(t["Дата операции"])[:10], "%Y-%m-%d").year == target_date.year
+                and datetime.strptime(str(t["Дата операции"])[:10], "%Y-%m-%d").month == target_date.month
+        ),
+        transactions
+    ))
 
     # 2. Только расходы
     expenses = list(filter(lambda t: t["Сумма операции"] < 0, filtered))
@@ -61,4 +77,4 @@ def investment_bank(month: str, transactions: List[Dict[str, Any]], limit: int) 
     total = round(total, 2)
     logger.info("Итого в инвесткопилке: %s", total)
 
-    return total
+    return round(total, 2)

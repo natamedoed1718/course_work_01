@@ -1,14 +1,18 @@
 import json
 import logging
-import os
+
 from datetime import datetime, timedelta
 from typing import Any, Dict, List
 
 import pandas as pd
-import requests
-from pandas import DataFrame
 
-from src.config import API_KEY, URL_CURRENCY, URL_STOCK
+from pandas import DataFrame
+from src.config import URL_CURRENCY, URL_STOCK
+
+import requests
+import os
+
+
 
 # Настройка базового логгера
 # Создаём папку logs, если её нет
@@ -132,9 +136,10 @@ def get_currency(path_to_json: str) -> list[dict]:
             currencies = settings["user_currencies"]
             logger.debug("Запрошены валюты: %s", currencies)
 
+        apikey = os.getenv('API_KEY')
         for currency in currencies:
             params = {"amount": str(1), "from": f"{currency}", "to": "RUB"}
-            headers = {"apikey": f"{API_KEY}"}
+            headers = {"apikey": f"{apikey}"}
             response = requests.get(URL_CURRENCY, headers=headers, params=params)
 
             if response.status_code == 200:
@@ -162,8 +167,9 @@ def get_stock(path_to_json: str) -> list[dict]:
             stocks = settings["user_stocks"]
             logger.debug("Запрошены акции: %s", stocks)
 
+        apikey = os.getenv('API_KEY')
         for stock in stocks:
-            params = {"function": "GLOBAL_QUOTE", "symbol": stock, "apikey": API_KEY}
+            params = {"function": "GLOBAL_QUOTE", "symbol": stock, "apikey": apikey}
             response = requests.get(URL_STOCK, params=params)
             if response.status_code == 200:
                 price = response.json().get("Global Quote", {}).get("05. price")
