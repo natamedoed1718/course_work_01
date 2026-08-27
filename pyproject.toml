@@ -1,8 +1,8 @@
 [project]
-name = "coursework-1"
-version = "0.1.0"
-description = ""
-authors = [{name = "natalakozlova",email = "natamedoed22@gmail.com"}]
+name = "financial-analytics_coursework-1"
+version = "1.0.0"
+description = "Сервис для анализа финансовых транзакций"
+authors = [{name = "NataliaKozlova",email = "natamedoed22@gmail.com"}]
 requires-python = ">=3.14"
 dependencies = [
     "flake8 (>=7.3.0,<8.0.0)",
